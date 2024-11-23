@@ -15,7 +15,8 @@
     "build": "npm run build:wasm && tsc && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pages": "npm run build && gh-pages -d dist --dest . --repo `git remote get-url origin`"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -35,6 +36,7 @@
     "@vitejs/plugin-react": "^4.3.3",
     "eslint": "^9.15.0",
     "eslint-plugin-react-refresh": "^0.4.14",
+    "gh-pages": "^6.2.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
