@@ -31,3 +31,4 @@ pnpm-lock.yaml
 src/wasm/
 src-wasm/target/
 
+stats.html
