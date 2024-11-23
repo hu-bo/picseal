@@ -1,5 +1,5 @@
 [package]
-name = "picseal"
+name = "gen_brand_photo_pictrue"
 version = "0.0.1"
 authors = [ "Wang Zhiwei" ]
 edition = "2021"
