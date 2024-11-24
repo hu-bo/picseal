@@ -4,8 +4,6 @@ import App from './App'
 import GithubCorner from './components/GithubCorner'
 // import './sw.reg.mgr.js';
 
-import 'antd/dist/antd.css'
-
 const root = document.getElementById('app')
 
 if (!root) {

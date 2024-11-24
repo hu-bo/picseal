@@ -2,7 +2,9 @@
 
 模仿小米照片风格，生成莱卡水印照片。同时支持佳能、尼康、苹果、华为、小米、DJI 等水印。可自动识别，也可自定义处理。
 
-在线试用：[picseal](https://zhiweio.github.io/picseal/)
+在线试用：
+- [zhiweio.github.io/picseal](https://zhiweio.github.io/picseal/)
+- [picseal.vercel.app](https://picseal.vercel.app)
 
 ![](./public/screenshot.png)
 
@@ -73,4 +75,4 @@ Build and run
 <!-- LINK GROUP -->
 
 [deploy-button-image]: https://vercel.com/button
-[deploy-link]: https://vercel.com/new/clone?repository-url=
+[deploy-link]: https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzhiweio%2Fpicseal&project-name=picseal&repository-name=picseal

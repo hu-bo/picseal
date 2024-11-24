@@ -78,12 +78,12 @@ static DEFAULT_EXIF_INFO: Lazy<Vec<Value>> = Lazy::new(|| {
         json!({
             "tag": "FocalLength",
             "value": "8.7",
-            "value_with_unit": "8.7mm"
+            "value_with_unit": "8.7 mm"
         }),
         json!({
             "tag": "FocalLengthIn35mmFilm",
             "value": "75",
-            "value_with_unit": "75mm"
+            "value_with_unit": "75 mm"
         }),
         json!({
             "tag": "PhotographicSensitivity",

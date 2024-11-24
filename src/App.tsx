@@ -1,7 +1,7 @@
 import type { RcFile } from 'antd/es/upload'
 import type { ExifData, FormValue } from './types'
-import { DownloadOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Divider, Form, Input, message, Select, Slider, Space, Typography, Upload } from 'antd'
+import { createFromIconfontCN, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Divider, Flex, Form, Input, message, Select, Slider, Space, Typography, Upload } from 'antd'
 import domtoimage from 'dom-to-image'
 import moment from 'moment'
 
@@ -9,6 +9,12 @@ import { useEffect, useRef, useState } from 'react'
 
 import init, { get_exif } from './wasm/gen_brand_photo_pictrue'
 import './styles/App.css'
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: [
+    '//at.alicdn.com/t/c/font_4757469_u2nszgglli.js', // icon-apple, icon-jianeng, icon-DJI, icon-fushi, icon-huawei1, icon-laika, icon-icon-xiaomiguishu, icon-nikon, icon-sony
+  ],
+})
 
 const brandList = [
   'Apple',
@@ -36,11 +42,29 @@ const initialFormValue = {
   fontFamily: 'misans',
 }
 
+const exhibitionImages = [
+  '/exhibition/apple.jpg',
+  '/exhibition/canon.jpg',
+  '/exhibition/dji.jpg',
+  '/exhibition/fujifilm.jpg',
+  '/exhibition/huawei.jpg',
+  '/exhibition/leica.jpg',
+  '/exhibition/xiaomi.jpg',
+  '/exhibition/nikon.jpg',
+  '/exhibition/sony.jpg',
+]
+
+// 在组件初始化时随机选择一张照片
+function randomImage() {
+  const randomIndex = Math.floor(Math.random() * exhibitionImages.length)
+  return exhibitionImages[randomIndex]
+}
+
 function App() {
   const [wasmLoaded, setWasmLoaded] = useState(false)
 
   const [formValue, setFormValue] = useState<FormValue>(initialFormValue)
-  const [imgUrl, setImgUrl] = useState<string>('./simple.jpg')
+  const [imgUrl, setImgUrl] = useState<string>(randomImage())
   const formRef = useRef()
 
   useEffect(() => {
@@ -71,20 +95,32 @@ function App() {
       return `${degrees}°${minutes}'${seconds}"`
   }
 
+  // 格式化品牌
+  const formatBrand = (make: string | undefined): string => {
+    const brand = (make || '').toLowerCase()
+    for (const b of brandList.map(b => b.toLowerCase())) {
+      if (brand.includes(b)) {
+        return b
+      }
+    }
+    return brand
+  }
+
   // 格式化曝光时间
-  const formatexposureTime = (exposureTime: string | undefined): string => {
+  const formatExposureTime = (exposureTime: string | undefined): string => {
     if (!exposureTime)
       return ''
-    return `${exposureTime}s`
+    const [numerator, denominator] = exposureTime.split('/').filter(Boolean).map(item => Math.floor(Number(item)))
+    return [numerator, denominator].join('/')
   }
 
   // 解析 EXIF 数据
   const parseExifData = (data: ExifData[]): Partial<FormValue> => {
     const exif = {
       GPSLatitude: '', // 纬度
-      GPSLatitudeRef: '',
+      GPSLatitudeRef: '', // 纬度方向
       GPSLongitude: '', // 经度
-      GPSLongitudeRef: '',
+      GPSLongitudeRef: '', // 经度方向
       FocalLengthIn35mmFilm: '', // 焦距
       FocalLength: '', // 焦距
       FNumber: '', // 光圈
@@ -94,12 +130,27 @@ function App() {
       Make: '', // 设备品牌
       DateTimeOriginal: '', // 拍摄时间
     }
-    data.forEach(item => (exif[item.tag] = item.value))
+    const exifValues = new Map(data.map(item => [item.tag, item.value]))
+    const exifValuesWithUnit = new Map(data.map(item => [item.tag, item.value_with_unit]))
+
+    exif.GPSLatitude = exifValues.get('GPSLatitude') || ''
+    exif.GPSLatitudeRef = exifValues.get('GPSLatitudeRef') || ''
+    exif.GPSLongitude = exifValues.get('GPSLongitude') || ''
+    exif.GPSLongitudeRef = exifValues.get('GPSLongitudeRef') || ''
+    exif.FocalLengthIn35mmFilm = exifValuesWithUnit.get('FocalLengthIn35mmFilm') || ''
+    exif.FocalLength = exifValuesWithUnit.get('FocalLength') || ''
+    exif.FNumber = exifValuesWithUnit.get('FNumber') || ''
+    exif.ExposureTime = exifValues.get('ExposureTime') || ''
+    exif.PhotographicSensitivity = exifValues.get('PhotographicSensitivity') || ''
+    exif.Model = exifValues.get('Model') || ''
+    exif.Make = exifValues.get('Make') || ''
+    exif.DateTimeOriginal = exifValues.get('DateTimeOriginal') || ''
+
     const gps = `${formatGPS(exif.GPSLatitude, exif.GPSLatitudeRef)} ${formatGPS(exif.GPSLongitude, exif.GPSLongitudeRef)}`
     const device = [
-      exif.FocalLengthIn35mmFilm || exif.FocalLength,
+      `${(exif.FocalLengthIn35mmFilm || exif.FocalLength).replace(/\s+/g, '')}`,
       exif.FNumber?.split('/')?.map((n, i) => (i ? (+n).toFixed(1) : n)).join('/'),
-      `${formatexposureTime(exif.ExposureTime)}`,
+      exif.ExposureTime ? `${formatExposureTime(exif.ExposureTime)}s` : '',
       exif.PhotographicSensitivity ? `ISO${exif.PhotographicSensitivity}` : '',
     ]
       .filter(Boolean)
@@ -109,7 +160,7 @@ function App() {
       date: exif.DateTimeOriginal || moment().format('YYYY.MM.DD HH:mm:ss'),
       gps,
       device,
-      brand: (exif.Make || '').toLowerCase(),
+      brand: `${formatBrand(exif.Make)}`,
     }
   }
 
@@ -129,6 +180,8 @@ function App() {
           ...parsedExif,
           brand_url: getBrandUrl(parsedExif.brand),
         }
+        console.log('original EXIF data: ', exifData)
+        console.log('parsed EXIF data: ', parsedExif)
         formRef.current.setFieldsValue(updatedFormValue)
         setFormValue(updatedFormValue)
         setImgUrl(URL.createObjectURL(new Blob([file], { type: file.type })))
@@ -215,6 +268,28 @@ function App() {
     setFormValue(prev => ({ ...prev, fontFamily }))
   }
 
+  // 更新处理展览按钮点击的函数
+  const handleExhibitionClick = async (brand: string) => {
+    const brandImageUrl = `/exhibition/${brand.toLowerCase()}.jpg` // 假设示例照片为 JPG 格式
+    setImgUrl(brandImageUrl)
+
+    // 读取图片文件并解析 EXIF 数据
+    const response = await fetch(brandImageUrl)
+    const blob = await response.blob()
+    const arrayBuffer = await blob.arrayBuffer()
+    const exifData = get_exif(new Uint8Array(arrayBuffer))
+    const parsedExif = parseExifData(exifData)
+
+    const updatedFormValue = {
+      ...formValue,
+      ...parsedExif,
+      brand_url: getBrandUrl(parsedExif.brand),
+    }
+
+    formRef.current.setFieldsValue(updatedFormValue)
+    setFormValue(updatedFormValue)
+  }
+
   return (
     <>
       <Typography.Title level={2}>水印照片生成器</Typography.Title>
@@ -238,6 +313,47 @@ function App() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="exhibition">
+        <Flex wrap gap="middle" horizontal="true" justify="center" align="center">
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('apple')}>
+            <IconFont type="icon-apple" style={{ fontSize: '16px' }} />
+            Apple
+          </Button>
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('canon')}>
+            <IconFont type="icon-jianeng" style={{ fontSize: '28px' }} />
+            Cannon
+          </Button>
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('dji')}>
+            <IconFont type="icon-DJI" style={{ fontSize: '28px' }} />
+            Dji
+          </Button>
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('fujifilm')}>
+            <IconFont type="icon-fushi" style={{ fontSize: '28px' }} />
+            Fuji
+          </Button>
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('huawei')}>
+            <IconFont type="icon-huawei1" style={{ fontSize: '16px' }} />
+            Huawei
+          </Button>
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('leica')}>
+            <IconFont type="icon-laika" style={{ fontSize: '16px' }} />
+            Leica
+          </Button>
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('xiaomi')}>
+            <IconFont type="icon-icon-xiaomiguishu" style={{ fontSize: '16px' }} />
+            Xiaomi
+          </Button>
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('nikon')}>
+            <IconFont type="icon-nikon" style={{ fontSize: '16px' }} />
+            Nikon
+          </Button>
+          <Button type="primary" shape="round" size="default" ghost onClick={() => handleExhibitionClick('sony')}>
+            <IconFont type="icon-sony" style={{ fontSize: '28px' }} />
+            Sony
+          </Button>
+        </Flex>
       </div>
 
       <div className="op">

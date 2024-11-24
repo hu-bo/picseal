@@ -109,6 +109,25 @@
     height: calc(var(--base-height) * var(--banner-scale));
 }
 
+/* Exhibition Styles */
+.exhibition {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.exhibition .ant-btn {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.exhibition .ant-btn:hover {
+    background-color: #4a90e2;
+    transform: translateY(-2px);
+}
+
 .op {
     display: flex;
     justify-content: center;
