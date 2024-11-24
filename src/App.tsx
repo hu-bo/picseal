@@ -270,7 +270,7 @@ function App() {
 
   // 更新处理展览按钮点击的函数
   const handleExhibitionClick = async (brand: string) => {
-    const brandImageUrl = `/exhibition/${brand.toLowerCase()}.jpg` // 假设示例照片为 JPG 格式
+    const brandImageUrl = `./exhibition/${brand.toLowerCase()}.jpg` // 假设示例照片为 JPG 格式
     setImgUrl(brandImageUrl)
 
     // 读取图片文件并解析 EXIF 数据
