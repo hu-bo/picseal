@@ -75,6 +75,27 @@ function App() {
     loadWasm()
   }, [])
 
+  // 在组件加载时随机选择一张照片并解析其 EXIF 数据
+  useEffect(() => {
+    const loadImageAndParseExif = async () => {
+      const randomImg = randomImage()
+      setImgUrl(randomImg)
+      const response = await fetch(randomImg)
+      const blob = await response.blob()
+      const arrayBuffer = await blob.arrayBuffer()
+      const exifData = get_exif(new Uint8Array(arrayBuffer))
+      const parsedExif = parseExifData(exifData)
+      const updatedFormValue = {
+        ...formValue,
+        ...parsedExif,
+        brand_url: getBrandUrl(parsedExif.brand),
+      }
+      formRef.current.setFieldsValue(updatedFormValue)
+      setFormValue(updatedFormValue)
+    }
+    loadImageAndParseExif()
+  }, [wasmLoaded]) // 依赖于 wasmLoaded
+
   if (!wasmLoaded) {
     return <div>Loading WASM...</div>
   }
