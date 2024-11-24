@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     wasm(),
     topLevelAwait(),
-    visualizer({ open: true }),
+    visualizer({ open: false }),
   ],
   server: {
     port: 3000,
@@ -21,4 +21,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['picseal'],
   },
+  // base: 'https://zhiweio.github.io/picseal/',
 })

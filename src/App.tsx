@@ -43,15 +43,15 @@ const initialFormValue = {
 }
 
 const exhibitionImages = [
-  '/exhibition/apple.jpg',
-  '/exhibition/canon.jpg',
-  '/exhibition/dji.jpg',
-  '/exhibition/fujifilm.jpg',
-  '/exhibition/huawei.jpg',
-  '/exhibition/leica.jpg',
-  '/exhibition/xiaomi.jpg',
-  '/exhibition/nikon.jpg',
-  '/exhibition/sony.jpg',
+  './exhibition/apple.jpg',
+  './exhibition/canon.jpg',
+  './exhibition/dji.jpg',
+  './exhibition/fujifilm.jpg',
+  './exhibition/huawei.jpg',
+  './exhibition/leica.jpg',
+  './exhibition/xiaomi.jpg',
+  './exhibition/nikon.jpg',
+  './exhibition/sony.jpg',
 ]
 
 // 在组件初始化时随机选择一张照片
