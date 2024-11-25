@@ -1,52 +1,52 @@
 # Picseal
 
-生成类似小米照片风格的莱卡水印照片。支持佳能、尼康、苹果、华为、小米、DJI 等设备的水印生成，可自动识别，也可自定义处理。
+Generate Leica-style watermark photos inspired by Xiaomi's photo style. Picseal supports automatic or custom watermark generation for Canon, Nikon, Apple, Huawei, Xiaomi, DJI, and more.
 
-[English](./README_en.md) 中文
+English [中文](./README.md)
 
-## 在线演示
+## Online Demo
 
-在线试用地址：
+Try it online:
 - [picseal.vercel.app](https://picseal.vercel.app)
 - [picseal.zhiweio.me](https://picseal.zhiweio.me)
 - [zhiweio.github.io/picseal](https://zhiweio.github.io/picseal/)
 
-![应用截图](./public/screenshot.png)
+![App Screenshot](./public/screenshot.png)
 
-## 部署方法
+## Deployment
 
-### 使用 Vercel 部署
+### Deploy with Vercel
 
-|           一键部署到 Vercel            |
-| :-----------------------------------: |
+|           Deploy with Vercel            |
+| :-------------------------------------: |
 | [![][deploy-button-image]][deploy-link] |
 
-### 本地部署
+### Deploy Locally
 
-1. **克隆项目代码**：
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/zhiweio/picseal
    ```
 
-2. **安装依赖**：
+2. **Install dependencies**:
    ```bash
-   # 安装 Rustup（编译器）
+   # Install Rustup (compiler)
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-   # 安装 wasm-pack
+   # Install wasm-pack
    curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- -y
    ```
 
-3. **构建并运行**：
+3. **Build and run**:
    ```bash
    npm install
    npm run build
    npm run preview
    ```
 
-### 使用 GitHub Pages 部署
+### Deploy with GitHub Pages
 
-1. 修改 `vite.config.ts` 中的 `base` 配置为你的 GitHub Pages URL（例如：`https://<USERNAME>.github.io/<REPO>/`）：
+1. Configure the `base` in `vite.config.ts` to match your GitHub Pages URL (e.g., `https://<USERNAME>.github.io/<REPO>/`):
    ```javascript
    import wasm from 'vite-plugin-wasm'
 
@@ -71,20 +71,20 @@
    })
    ```
 
-2. **构建并部署**：
+2. **Build and deploy**:
    ```bash
    npm install
    npm run pages
    ```
 
-## 作者
+## Authors
 
 - [@Wang Zhiwei](https://github.com/zhiweio)
 
-## 开源协议
+## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-<!-- 链接配置 -->
+<!-- LINK GROUP -->
 [deploy-button-image]: https://vercel.com/button
 [deploy-link]: https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzhiweio%2Fpicseal&project-name=picseal&repository-name=picseal

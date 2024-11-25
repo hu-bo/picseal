@@ -20,7 +20,7 @@
     --font-weight-bold: 700;
     --font-weight-black: 900;
     --current-font-weight: var(--font-weight-bold);
-    --font-family-default: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    --font-family-default: system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
     --font-family-misans: "MiSans", var(--font-family-default); /* 添加 MiSans 字体 */
     --font-family-caveat: 'Caveat', cursive;
     --font-family-helvetica: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -36,6 +36,14 @@
     padding: 20px 0;
 }
 
+.picseal-title {
+    font-family: var(--font-family-caveat), system-ui;
+}
+
+.picseal-description {
+    font-family: var(--font-family-misans), system-ui;
+}
+
 .preview-box {
     margin-bottom: 16px;
 }
@@ -47,13 +55,26 @@
 
 .preview-picture {
     max-width: 100%;
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    opacity: 0; /* 初始透明度 */
+    transform: scale(0.95); /* 初始缩放 */
+}
+
+.preview-picture.loaded {
+    opacity: 1; /* 加载完成后设置为不透明 */
+    transform: scale(1); /* 恢复到正常大小 */
+}
+
+.preview-picture.fade {
+    opacity: 0; /* 在切换时设置为透明 */
+    transform: scale(0.95); /* 在切换时缩小 */
 }
 
 .preview-info {
     padding: calc(var(--base-padding) * var(--banner-scale));
     display: flex;
     flex-direction: row; /* Keep it as row for horizontal layout */
-    font-family: var(--current-font-family);
+    font-family: var(--current-font-family), system-ui;
     align-items: center; /* Align items vertically centered */
 }
 

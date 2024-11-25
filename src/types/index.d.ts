@@ -9,7 +9,7 @@ interface ExifData {
   value_with_unit: string
 }
 
-export interface FormValue {
+export interface ExifParamsForm {
   model: string
   date: string
   gps: string
