@@ -1,6 +1,6 @@
 import type { ExifParamsForm } from './types'
 import { createFromIconfontCN, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Divider, Flex, Form, Input, Select, Slider, Space, Typography, Upload } from 'antd'
+import { Button, Divider, Flex, Form, Input, Select, Slider, Space, Switch, Tooltip, Typography, Upload } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import { useImageHandlers } from './hooks/useImageHandlers'
 
@@ -24,6 +24,7 @@ function App() {
   const formRef = useRef()
   const { imgRef, imgUrl, setImgUrl, formValue, setFormValue, handleAdd, handleDownload, handleFormChange, handleFontSizeChange, handleFontWeightChange, handleFontFamilyChange, handleScaleChange, handleExhibitionClick } = useImageHandlers(formRef, DefaultPictureExif)
   const [wasmLoaded, setWasmLoaded] = useState(false)
+  const [exifEnable, setExifEnable] = useState(false)
 
   const formValueRef = useRef<ExifParamsForm>(DefaultPictureExif)
 
@@ -155,7 +156,7 @@ function App() {
             type="primary"
             shape="round"
             icon={<DownloadOutlined />}
-            onClick={handleDownload}
+            onClick={() => handleDownload(exifEnable)}
           >
             导出照片
           </Button>
@@ -168,6 +169,15 @@ function App() {
           <Typography.Title level={4}>参数</Typography.Title>
         </div>
         <div className="props-option">
+          <Flex wrap gap="small" horizontal="true" justify="flex-start" align="center">
+            <Typography.Text className="switch-title">导出 EXIF</Typography.Text>
+            <Tooltip placement="topLeft" title="实验性功能：嵌入原图 EXIF 信息至导出图片，只支持 JPEG">
+              <Switch
+                defaultChecked={exifEnable}
+                onClick={() => setExifEnable(!exifEnable)}
+              />
+            </Tooltip>
+          </Flex>
           <Form
             ref={formRef}
             labelCol={{ span: 4 }}

@@ -230,3 +230,37 @@
     background-color: #0056b3; /* Darker blue on hover */
     transform: translateY(-2px); /* Lift effect on hover */
 }
+
+/* Switch Styles */
+.switch-title {
+    color: #aaa; /* Light gray color for the title */
+    font-family: var(--current-font-family), system-ui;
+    font-size: 12px; /* Font size for the title */
+}
+
+.ant-switch {
+    border-radius: 20px; /* Rounded corners for a modern look */
+    background-color: #e0e0e0; /* Light gray background color */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.ant-switch-checked {
+    background-color: #a0c4ff; /* Light blue background color when checked */
+}
+
+.ant-switch-checked:hover {
+    background-color: #8ab8ff; /* Lighter shade on hover when checked */
+}
+
+/* Tooltip Styles */
+.ant-tooltip {
+    border-radius: 8px; /* Rounded corners for tooltips */
+    background-color: #f0f0f0; /* Light background for better contrast */
+    color: #333; /* Dark text for readability */
+    padding: 8px; /* Padding for better spacing */
+    font-size: 14px; /* Font size for tooltip text */
+}
+
+.ant-tooltip-arrow {
+    border-color: #f0f0f0; /* Match arrow color with tooltip background */
+}

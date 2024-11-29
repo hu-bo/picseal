@@ -47,7 +47,7 @@ export function useImageHandlers(formRef: any, initialFormValue: ExifParamsForm)
   }
 
   // 导出图片
-  const handleDownload = async (): Promise<void> => {
+  const handleDownload = async (exifEnable: boolean): Promise<void> => {
     const previewDom = document.getElementById('preview')
     const zoomRatio = 4
 
@@ -72,7 +72,7 @@ export function useImageHandlers(formRef: any, initialFormValue: ExifParamsForm)
       }
 
       const link = document.createElement('a')
-      if (exifBlob) {
+      if (exifEnable && exifBlob) {
         if (uploadImgType === 'image/jpeg' || uploadImgType === 'image/jpg') {
           console.log('embed exif in jpg')
           const imgBlob = dataURLtoBlob(dataUrl)
