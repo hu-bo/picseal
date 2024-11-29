@@ -31,4 +31,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/picseal:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/picseal:latest

@@ -14,7 +14,7 @@ RUN curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh -s -- 
 
 WORKDIR /app
 
-COPY public/ scripts/ src/ src-wasm/ eslint.config.js index.html package.json tsconfig.app.json tsconfig.json tsconfig.node.json vite.config.ts ./
+COPY . .
 
 RUN npm install
 
