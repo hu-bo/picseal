@@ -5,13 +5,16 @@ import { message } from 'antd'
 import domtoimage from 'dom-to-image'
 import { useRef, useState } from 'react'
 import { getBrandUrl } from '../utils/BrandUtils'
-import { getRandomImage, parseExifData } from '../utils/ImageUtils'
+import { dataURLtoBlob, getRandomImage, parseExifData } from '../utils/ImageUtils'
+import { embedExifRaw, extractExifRaw } from '../utils/JpegExifUtils'
 import { get_exif } from '../wasm/gen_brand_photo_pictrue'
 
 export function useImageHandlers(formRef: any, initialFormValue: ExifParamsForm) {
   const [formValue, setFormValue] = useState<ExifParamsForm>(initialFormValue)
   const [imgUrl, setImgUrl] = useState<string>(getRandomImage())
   const imgRef = useRef<HTMLImageElement>(null)
+  const [uploadImgType, setUploadImgType] = useState<string>()
+  const [exifBlob, setExifBlob] = useState<Blob>(null)
 
   // 处理文件上传
   const handleAdd = (file: RcFile): false => {
@@ -23,13 +26,16 @@ export function useImageHandlers(formRef: any, initialFormValue: ExifParamsForm)
         const updatedFormValue = {
           ...formValue,
           ...parsedExif,
-          brand_url: getBrandUrl(parsedExif.brand), // Use getBrandUrl from utils
+          brand_url: getBrandUrl(parsedExif.brand),
         }
         console.log('original EXIF data: ', exifData)
         console.log('parsed EXIF data: ', parsedExif)
         formRef.current.setFieldsValue(updatedFormValue)
         setFormValue(updatedFormValue)
         setImgUrl(URL.createObjectURL(new Blob([file], { type: file.type })))
+        const parsedExifBlob = await extractExifRaw(new Blob([file]))
+        setExifBlob(parsedExifBlob)
+        setUploadImgType(file.type)
       }
       catch (error) {
         console.error('Error parsing EXIF data:', error)
@@ -41,29 +47,56 @@ export function useImageHandlers(formRef: any, initialFormValue: ExifParamsForm)
   }
 
   // 导出图片
-  const handleDownload = (): void => {
+  const handleDownload = async (): Promise<void> => {
     const previewDom = document.getElementById('preview')
     const zoomRatio = 4
 
-    domtoimage
-      .toJpeg(previewDom, {
-        quality: 1.0,
-        width: previewDom.clientWidth * zoomRatio,
-        height: previewDom.clientHeight * zoomRatio,
-        style: { transform: `scale(${zoomRatio})`, transformOrigin: 'top left' },
-      })
-      .then((dataUrl) => {
-        const link = document.createElement('a')
-        link.download = `${Date.now()}.jpg`
+    try {
+      let dataUrl: string
+      if (uploadImgType === 'image/png') {
+        console.log('dom to png')
+        dataUrl = await domtoimage.toPng(previewDom, {
+          quality: 1.0,
+          width: previewDom.clientWidth * zoomRatio,
+          height: previewDom.clientHeight * zoomRatio,
+          style: { transform: `scale(${zoomRatio})`, transformOrigin: 'top left' },
+        })
+      }
+      else {
+        dataUrl = await domtoimage.toJpeg(previewDom, {
+          quality: 1.0,
+          width: previewDom.clientWidth * zoomRatio,
+          height: previewDom.clientHeight * zoomRatio,
+          style: { transform: `scale(${zoomRatio})`, transformOrigin: 'top left' },
+        })
+      }
+
+      const link = document.createElement('a')
+      if (exifBlob) {
+        if (uploadImgType === 'image/jpeg' || uploadImgType === 'image/jpg') {
+          console.log('embed exif in jpg')
+          const imgBlob = dataURLtoBlob(dataUrl)
+          const downloadImg = await embedExifRaw(exifBlob, imgBlob)
+          link.href = URL.createObjectURL(downloadImg)
+        }
+        else {
+          console.warn('EXIF blob data can only be embedded in JPEG or JPG images.')
+          link.href = dataUrl
+        }
+      }
+      else {
         link.href = dataUrl
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-      })
-      .catch((err) => {
-        console.error('Export Error:', err)
-        message.error('导出失败，请重试')
-      })
+      }
+      const fileExt: string = (uploadImgType || 'jpg').replace(/image\//g, '')
+      link.download = `${Date.now()}.${fileExt}`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    }
+    catch (error) {
+      console.error('Download Error:', error)
+      message.error('导出失败，请重试')
+    }
   }
 
   // 处理表单更新

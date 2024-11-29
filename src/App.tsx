@@ -4,7 +4,7 @@ import { Button, Divider, Flex, Form, Input, Select, Slider, Space, Typography, 
 import { useEffect, useRef, useState } from 'react'
 import { useImageHandlers } from './hooks/useImageHandlers'
 
-import { BrandsList, getBrandUrl } from './utils/BrandUtils'
+import { BrandsList, getBrandUrl } from './utils/BrandUtils.ts'
 import {
   DefaultPictureExif,
   getRandomImage,

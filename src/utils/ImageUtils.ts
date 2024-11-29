@@ -62,6 +62,14 @@ export function formatExposureTime(exposureTime: string | undefined): string {
 
 // 解析 EXIF 数据
 export function parseExifData(data: ExifData[]): Partial<ExifParamsForm> {
+  const exifValues = new Map(data.map(item => [item.tag, item.value]))
+  const exifValuesWithUnit = new Map(data.map(item => [item.tag, item.value_with_unit]))
+  const make: string = (exifValues.get('Make') || '').replace(/[",]/g, '')
+  const brand: string = formatBrand(make || 'unknow')
+  if (brand === 'unknow') {
+    return DefaultPictureExif
+  }
+
   const exif = {
     GPSLatitude: '',
     GPSLatitudeRef: '',
@@ -76,9 +84,8 @@ export function parseExifData(data: ExifData[]): Partial<ExifParamsForm> {
     Make: '',
     DateTimeOriginal: '',
   }
-  const exifValues = new Map(data.map(item => [item.tag, item.value]))
-  const exifValuesWithUnit = new Map(data.map(item => [item.tag, item.value_with_unit]))
-
+  exif.Make = make
+  exif.Model = `${(exifValues.get('Model') || '').replace(/[",]/g, '')}`
   exif.GPSLatitude = exifValues.get('GPSLatitude') || ''
   exif.GPSLatitudeRef = exifValues.get('GPSLatitudeRef') || ''
   exif.GPSLongitude = exifValues.get('GPSLongitude') || ''
@@ -88,8 +95,6 @@ export function parseExifData(data: ExifData[]): Partial<ExifParamsForm> {
   exif.FNumber = exifValuesWithUnit.get('FNumber') || ''
   exif.ExposureTime = exifValues.get('ExposureTime') || ''
   exif.PhotographicSensitivity = exifValues.get('PhotographicSensitivity') || ''
-  exif.Model = exifValues.get('Model') || ''
-  exif.Make = exifValues.get('Make') || ''
   exif.DateTimeOriginal = exifValues.get('DateTimeOriginal') || ''
 
   const gps = `${formatGPS(exif.GPSLatitude, exif.GPSLatitudeRef)} ${formatGPS(exif.GPSLongitude, exif.GPSLongitudeRef)}`
@@ -102,11 +107,11 @@ export function parseExifData(data: ExifData[]): Partial<ExifParamsForm> {
     .filter(Boolean)
     .join(' ')
   return {
-    model: exif.Model || 'Unknown Model',
+    model: exif.Model || 'PICSEAL',
     date: exif.DateTimeOriginal || moment().format('YYYY.MM.DD HH:mm:ss'),
     gps,
     device,
-    brand: `${formatBrand(exif.Make)}`,
+    brand,
   }
 }
 
@@ -114,4 +119,15 @@ export function parseExifData(data: ExifData[]): Partial<ExifParamsForm> {
 export function getRandomImage() {
   const randomIndex = Math.floor(Math.random() * ExhibitionImages.length)
   return ExhibitionImages[randomIndex]
+}
+
+export function dataURLtoBlob(dataURL: string): Blob {
+  const byteString: string = atob(dataURL.split(',')[1])
+  const mimeString: string = dataURL.split(',')[0].split(':')[1].split(';')[0]
+  const ab = new ArrayBuffer(byteString.length)
+  const ia = new Uint8Array(ab)
+  for (let i: number = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i)
+  }
+  return new Blob([ab], { type: mimeString })
 }
