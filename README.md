@@ -2,8 +2,6 @@
 
 生成类似小米照片风格的莱卡水印照片。支持佳能、尼康、苹果、华为、小米、DJI 等设备的水印生成，可自动识别，也可自定义处理。
 
-[English](./README_en.md) 中文
-
 ## 在线演示
 
 在线试用地址：
@@ -12,6 +10,27 @@
 - [zhiweio.github.io/picseal](https://zhiweio.github.io/picseal/)
 
 ![应用截图](./public/screenshot.png)
+
+## 技术实现
+
+### EXIF 解析
+
+使用了 Rust 库 `kamadak-exif` 从图片中提取得到 EXIF 信息并借助 WASM 技术嵌入前端 JavaScript 使用。
+
+### 水印生成
+
+通过 HTML 和 CSS 生成水印样式，能够做到动态调整实时预览。
+
+### 图片生成
+
+导出的图片是通过 `dom-to-image` JavaScript 库来将 DOM 转 JPEG/PNG 等格式图片，请注意这种实现生成的是和原图完全不一样的图片，可以看作屏幕截图的方式。
+
+目前针对 JPEG 格式图片新增了复制原图 EXIF 信息嵌进导出的图片中，目前的实现方式比较简单粗暴，直接从原图二进制数据提取 EXIF 部分的数据，再同样以二进制格式进行拼接，不能确保稳定。
+
+### 改进
+
+- [ ] 改用 Rust `little_exif` 库来实现对图片 EXIF 信息的读取和编辑。
+- [ ] 改用 Canvas 来实现水印，支持高度自定义。
 
 ## 部署方法
 
@@ -76,6 +95,20 @@
    npm install
    npm run pages
    ```
+
+### 使用 Docker 部署
+
+1. 拉取镜像
+   ```bash
+   docker pull zhiweio/picseal:latest
+   ```
+
+2. 启动容器
+   ```bash
+   docker run -d -p 8080:80 picseal
+   ```
+
+3. 访问 http://localhost:8080
 
 ## 作者
 
