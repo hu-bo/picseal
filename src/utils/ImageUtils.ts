@@ -4,7 +4,7 @@ import { BrandsList } from './BrandUtils'
 
 export const DefaultPictureExif = {
   model: 'XIAOMI 13 ULTRA',
-  date: moment().format('YYYY.MM.DD HH:mm:ss'),
+  date: moment().format('YYYY.MM.DD HH:mm'),
   gps: `41°12'47"N 124°00'16"W`,
   device: '75mm f/1.8 1/33s ISO800',
   brand: 'leica',
@@ -60,6 +60,24 @@ export function formatExposureTime(exposureTime: string | undefined): string {
   return [numerator, denominator].join('/')
 }
 
+// 格式化拍摄时间
+export function formatDateTimeOriginal(dateTimeOriginal: string | undefined): string {
+  if (!dateTimeOriginal)
+    return moment().format('YYYY.MM.DD HH:mm')
+  return moment(dateTimeOriginal).format('YYYY-MM-DD HH:mm')
+}
+
+export function formatModel(model: string, brand: string): string {
+  const camera_model: string = model.replace(/[",]/g, '')
+  if (brand === 'sony') {
+    return camera_model.replace(/[",]/g, '').replace('ILCE-', 'α').toLowerCase()
+  }
+  if (brand === 'nikon corporation') {
+    return camera_model.replace(/Z/gi, 'ℤ')
+  }
+  return camera_model
+}
+
 // 解析 EXIF 数据
 export function parseExifData(data: ExifData[]): Partial<ExifParamsForm> {
   const exifValues = new Map(data.map(item => [item.tag, item.value]))
@@ -85,7 +103,7 @@ export function parseExifData(data: ExifData[]): Partial<ExifParamsForm> {
     DateTimeOriginal: '',
   }
   exif.Make = make
-  exif.Model = `${(exifValues.get('Model') || '').replace(/[",]/g, '')}`
+  exif.Model = `${formatModel((exifValues.get('Model') || ''), brand)}`
   exif.GPSLatitude = exifValues.get('GPSLatitude') || ''
   exif.GPSLatitudeRef = exifValues.get('GPSLatitudeRef') || ''
   exif.GPSLongitude = exifValues.get('GPSLongitude') || ''
@@ -108,7 +126,7 @@ export function parseExifData(data: ExifData[]): Partial<ExifParamsForm> {
     .join(' ')
   return {
     model: exif.Model || 'PICSEAL',
-    date: exif.DateTimeOriginal || moment().format('YYYY.MM.DD HH:mm:ss'),
+    date: `${formatDateTimeOriginal(exif.DateTimeOriginal)}`,
     gps,
     device,
     brand,
