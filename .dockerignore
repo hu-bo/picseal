@@ -10,3 +10,8 @@ LICENSE
 stats.html
 vercel.json
 .dockerignore
+package-lock.json
+pnpm-lock.yaml
+Dockerfile
+.dockerignore
+.gitignore

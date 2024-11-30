@@ -11,8 +11,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     let source = SourceFile {
         files: vec![
             "index.html",
-            "sw.js",
-            "sw.reg.mgr.js"
         ],
         dirs: vec!["src", "pubilc"],
     };

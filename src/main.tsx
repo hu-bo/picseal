@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import GithubCorner from './components/GithubCorner'
-// import './sw.reg.mgr.js';
 
 const root = document.getElementById('app')
 

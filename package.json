@@ -47,6 +47,7 @@
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vite-plugin-image-optimizer": "^1.1.8",
+    "vite-plugin-pwa": "^0.21.1",
     "vite-plugin-top-level-await": "^1.4.4",
     "vite-plugin-wasm": "^3.3.0"
   }

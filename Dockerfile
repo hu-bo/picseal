@@ -16,9 +16,19 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install
+USER root
 
-RUN npm run build
+RUN chown -R picseal:picseal /app && \
+    chmod -R 755 /app
+
+ENV NPM_VERSION=10.9.1
+RUN npm cache clean --force && \
+    npm install -g npm@"${NPM_VERSION}"
+
+RUN npm install && \
+    npm run build
+
+USER picseal
 
 FROM nginx:alpine AS production
 
