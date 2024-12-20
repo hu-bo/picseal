@@ -3,6 +3,7 @@
   "buildCommand": "source $HOME/.cargo/env && npm run build",
   "git": {
     "deploymentEnabled": {
+      "feature/update": false,
       "gh-pages": false
     }
   },
